@@ -32,15 +32,6 @@ void setup ()
 }
 public void draw ()
 {
-  if (isLost) {
-    for (MSButton[] buttona : buttons) {
-      for (MSButton button : buttona) {
-        if (bombs.contains(button)) {
-          button.mousePressed();
-        }
-      }
-    }
-  }
   background( 255 );
   fill(100);
   textSize(75);
