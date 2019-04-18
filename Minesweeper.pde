@@ -13,11 +13,11 @@ void setup ()
 {
   isLost = false;
   firstClick = true;
-  NUM_COLS = 54;
-  NUM_ROWS = 36;
+  NUM_COLS = 9*4;
+  NUM_ROWS = 6*4;
   bombs = new ArrayList<MSButton>();
   buttons = new MSButton[NUM_ROWS][NUM_COLS];
-  maxBombs = 199;
+  maxBombs = 99;
   size(1080, 800);
   textAlign(CENTER, CENTER);
 
@@ -27,53 +27,6 @@ void setup ()
     for (int j = 0; j < NUM_COLS; j++) {
       MSButton nButton = new MSButton(i, j);
       buttons[i][j] = nButton;
-    }
-  }
-}
-public void mousePressed() {
-  if (firstClick && mouseButton == LEFT) {
-    MSButton buttontemp;
-    ArrayList<Integer> bombarr = new ArrayList<Integer>();
-    buttontemp = buttons[0][0];
-    for (MSButton[] buttona : buttons) {
-      for (MSButton button : buttona) {
-        if (button.firstClicked()) {
-          buttontemp = button;
-        }
-      }
-    }
-    for (int i = -2; i <= 2; i++) {
-      for (int j = -2; j <=2; j++) {
-        bombarr.add(buttontemp.getNum()+i+j*NUM_COLS);
-      }
-    }
-    while (bombarr.size() < maxBombs + 9) {
-      int randomnum = (int)(Math.random() * NUM_COLS * NUM_ROWS);
-      if (randomnum == 0) {
-        randomnum = 1;
-      }
-      if (!bombarr.contains(randomnum)) {
-        bombarr.add(randomnum);
-      }
-    }
-    for (int x = 0; x < 25; x++) {
-      bombarr.remove(0);
-    }
-    for (Integer tempint : bombarr) {
-      bombs.add(buttons[tempint/NUM_COLS][tempint%NUM_COLS]);
-    }
-    firstClick = false;
-    buttontemp.mousePressed();
-  }
-  if (isLost) {
-    isLost = false;
-    firstClick = true;
-    bombs = new ArrayList<MSButton>();
-    textAlign(CENTER, CENTER);
-    for(MSButton[] buttona : buttons){
-    for(MSButton button : buttona){
-    button.changeClickedF();
-    }
     }
   }
 }
@@ -136,7 +89,7 @@ public void displayLosingMessage()
 public void displayWinningMessage()
 {
   noLoop();
-  text("You Win!", 500,750);
+  text("You Win!", 500, 750);
   //your code here
 }
 
@@ -160,12 +113,12 @@ public class MSButton
     marked = clicked = false;
     Interactive.add( this ); // register it with the manager
   }
-  public void changeClickedF(){
-  clicked = false;
-  marked = false;
-  setLabel("");
+  public void changeClickedF() {
+    clicked = false;
+    marked = false;
+    setLabel("");
   }
-  public void kill(){
+  public void kill() {
     alive = false;
   }
   public boolean isMarked()
@@ -192,8 +145,8 @@ public class MSButton
       } else if (marked == false) {
         mouseButton = LEFT;
         if (countBombs(r, c) - countMarked(r, c) == 0) {
-          for (int i = -2; i <= 2; i++) {
-            for (int j = -2; j <= 2; j++) {
+          for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
               if (!(i == 0 && j == 0)) {
                 if (isValid(r+i, c+j) && !buttons[r+i][j+c].isClicked()) {
                   buttons[r+i][c+j].mousePressed();
@@ -203,15 +156,15 @@ public class MSButton
           }
         }
       }
-    } else if(mouseButton == LEFT) {
+    } else if (mouseButton == LEFT) {
       if (firstClick && !marked) {
         ifFC = true;
       }
       if (!firstClick && !marked) {
         clicked = true;
         if (countBombs(r, c) == 0) {
-          for (int i = -2; i <= 2; i++) {
-            for (int j = -2; j <= 2; j++) {
+          for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
               if (!(i == 0 && j == 0)) {
                 if (isValid(r+i, c+j) && !buttons[r+i][j+c].isClicked()) {
                   buttons[r+i][c+j].mousePressed();
@@ -222,6 +175,52 @@ public class MSButton
         }
         if (!(countBombs(r, c) == 0 || bombs.contains(buttons[r][c]))) {
           setLabel(str(countBombs(r, c)));
+        }
+      }
+    }
+
+    if (firstClick && mouseButton == LEFT) {
+      MSButton buttontemp;
+      ArrayList<Integer> bombarr = new ArrayList<Integer>();
+      buttontemp = buttons[0][0];
+      for (MSButton[] buttona : buttons) {
+        for (MSButton button : buttona) {
+          if (button.firstClicked()) {
+            buttontemp = button;
+          }
+        }
+      }
+      for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <=1; j++) {
+          bombarr.add(buttontemp.getNum()+i+j*NUM_COLS);
+        }
+      }
+      while (bombarr.size() < maxBombs + 9) {
+        int randomnum = (int)(Math.random() * NUM_COLS * NUM_ROWS);
+        if (randomnum == 0) {
+          randomnum = 1;
+        }
+        if (!bombarr.contains(randomnum)) {
+          bombarr.add(randomnum);
+        }
+      }
+      for (int x = 0; x < 9; x++) {
+        bombarr.remove(0);
+      }
+      for (Integer tempint : bombarr) {
+        bombs.add(buttons[tempint/NUM_COLS][tempint%NUM_COLS]);
+      }
+      firstClick = false;
+      buttontemp.mousePressed();
+    }
+    if (isLost) {
+      isLost = false;
+      firstClick = true;
+      bombs = new ArrayList<MSButton>();
+      textAlign(CENTER, CENTER);
+      for (MSButton[] buttona : buttons) {
+        for (MSButton button : buttona) {
+          button.changeClickedF();
         }
       }
     }
@@ -260,8 +259,8 @@ public class MSButton
   public int countBombs(int row, int col)
   {
     int numBombs = 0;
-    for (int i = -2; i <= 2; i++) {
-      for (int j = -2; j <= 2; j++) {
+    for (int i = -1; i <= 1; i++) {
+      for (int j = -1; j <= 1; j++) {
         if ( isValid(row +j, col +i) && bombs.contains(buttons[row+j][col+i])) {
           numBombs++;
         }
@@ -272,8 +271,8 @@ public class MSButton
   public int countMarked(int row, int col)
   {
     int numM = 0;
-    for (int i = -2; i <= 2; i++) {
-      for (int j = -2; j <= 2; j++) {
+    for (int i = -1; i <= 1; i++) {
+      for (int j = -1; j <= 1; j++) {
         if ( isValid(row +j, col +i) && buttons[row+j][col+i].isMarked()) {
           numM++;
         }
