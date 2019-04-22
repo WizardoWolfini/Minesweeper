@@ -90,8 +90,6 @@ public class MSButton
   private float x, y, width, height;
   private boolean clicked, marked;
   private String label;
-  private boolean ifFC = false;
-  private boolean alive = true;
   public MSButton ( int rr, int cc )
   {
     width = 1080/NUM_COLS;
@@ -109,15 +107,9 @@ public class MSButton
     marked = false;
     setLabel("");
   }
-  public void kill() {
-    alive = false;
-  }
   public boolean isMarked()
   {
     return marked;
-  }
-  public boolean firstClicked() {
-    return ifFC;
   }
   public boolean isClicked()
   {
@@ -130,57 +122,10 @@ public class MSButton
 
   public void mousePressed () 
   {
-    if (mouseButton == RIGHT && !firstClick) {
-      if (clicked == false) {
-        marked = !marked;
-      } else if (marked == false) {
-        mouseButton = LEFT;
-        if (countBombs(r, c) - countMarked(r, c) == 0) {
-          for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-              if (!(i == 0 && j == 0)) {
-                if (isValid(r+i, c+j) && !buttons[r+i][j+c].isClicked()) {
-                  buttons[r+i][c+j].mousePressed();
-                }
-              }
-            }
-          }
-        }
-      }
-    } else if (mouseButton == LEFT) {
-      if (firstClick && !marked) {
-        ifFC = true;
-      }
-      if (!firstClick && !marked) {
-        clicked = true;
-        if (countBombs(r, c) == 0) {
-          for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-              if (!(i == 0 && j == 0)) {
-                if (isValid(r+i, c+j) && !buttons[r+i][j+c].isClicked()) {
-                  buttons[r+i][c+j].mousePressed();
-                }
-              }
-            }
-          }
-        }
-        if (!(countBombs(r, c) == 0 || bombs.contains(buttons[r][c]))) {
-          setLabel(str(countBombs(r, c)));
-        }
-      }
-    }
-
     if (firstClick && mouseButton == LEFT) {
       MSButton buttontemp;
       ArrayList<Integer> bombarr = new ArrayList<Integer>();
-      buttontemp = buttons[0][0];
-      for (MSButton[] buttona : buttons) {
-        for (MSButton button : buttona) {
-          if (button.firstClicked()) {
-            buttontemp = button;
-          }
-        }
-      }
+      buttontemp = buttons[r][c];
       for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <=1; j++) {
           bombarr.add(buttontemp.getNum()+i+j*NUM_COLS);
@@ -204,6 +149,42 @@ public class MSButton
       }
       firstClick = false;
       buttontemp.mousePressed();
+    }
+    if (mouseButton == RIGHT && !firstClick) {
+      if (clicked == false) {
+        marked = !marked;
+      } else if (marked == false) {
+        mouseButton = LEFT;
+        if (countBombs(r, c) - countMarked(r, c) == 0) {
+          for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+              if (!(i == 0 && j == 0)) {
+                if (isValid(r+i, c+j) && !buttons[r+i][j+c].isClicked()) {
+                  buttons[r+i][c+j].mousePressed();
+                }
+              }
+            }
+          }
+        }
+      }
+    } else if (mouseButton == LEFT) {
+      if (!firstClick && !marked) {
+        clicked = true;
+        if (countBombs(r, c) == 0) {
+          for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+              if (!(i == 0 && j == 0)) {
+                if (isValid(r+i, c+j) && !buttons[r+i][j+c].isClicked()) {
+                  buttons[r+i][c+j].mousePressed();
+                }
+              }
+            }
+          }
+        }
+        if (!(countBombs(r, c) == 0 || bombs.contains(buttons[r][c]))) {
+          setLabel(str(countBombs(r, c)));
+        }
+      }
     }
     if (isLost) {
       isLost = false;
