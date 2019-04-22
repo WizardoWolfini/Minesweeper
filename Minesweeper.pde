@@ -145,7 +145,8 @@ public class MSButton
       }
       for (Integer tempint : bombarr) {
         int remainder = tempint%NUM_COLS;
-        bombs.add(buttons[tempint/NUM_COLS][remainder]);
+        int tempcol = tempint/NUM_COLS;
+        bombs.add(buttons[tempcol][remainder]);
       }
       firstClick = false;
       buttontemp.mousePressed();
