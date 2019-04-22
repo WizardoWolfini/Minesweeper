@@ -124,29 +124,20 @@ public class MSButton
   {
     if (firstClick && mouseButton == LEFT) {
       MSButton buttontemp;
-      ArrayList<Integer> bombarr = new ArrayList<Integer>();
       buttontemp = buttons[r][c];
       for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <=1; j++) {
-          bombarr.add(buttontemp.getNum()+i+j*NUM_COLS);
+          bombs.add(buttons[r + i][c+j]);
         }
       }
-      while (bombarr.size() < maxBombs + 9) {
-        int randomnum = (int)(Math.random() * NUM_COLS * NUM_ROWS);
-        if (randomnum == 0) {
-          randomnum = 1;
-        }
-        if (!bombarr.contains(randomnum)) {
-          bombarr.add(randomnum);
+      while (bombs.size() < maxBombs + 10) {
+        MSButton tempb = buttons[(int)(Math.random() * NUM_ROWS)][(int)(Math.random() * NUM_COLS)];
+        if (!bombs.contains(tempb)) {
+          bombs.add(tempb);
         }
       }
-      for (int x = 0; x < 9; x++) {
-        bombarr.remove(0);
-      }
-      for (Integer tempint : bombarr) {
-        int remainder = tempint%NUM_COLS;
-        int tempcol = tempint/NUM_COLS;
-        bombs.add(buttons[tempcol][remainder]);
+      for (int x = 0; x < 10; x++) {
+        bombs.remove(0);
       }
       firstClick = false;
       buttontemp.mousePressed();
